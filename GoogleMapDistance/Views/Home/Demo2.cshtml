@@ -1,0 +1,203 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+<style>
+    .pac-container {
+  box-sizing: content-box;
+  padding-right: 4px;
+}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<div class="row">
+    <div class="col-md-12">
+        <h2>Distance between one origin and multiple target destinations</h2>
+        <p>
+            This demonstrates getting and displaying the distance between multiple points
+        </p>
+
+        <div> Add Destination</div>
+        <div>
+            <input id="travelto" type="text" name="name" value="Oving, UK"  size="120"/>
+            <input type="button" value="Add" onclick="PushDestination()" />
+            <a href="#" onclick="setDestination('Tagmere, UK')">Tagmere, UK. </a>
+            <a href="#" onclick="setDestination('Bosham, UK')">Bosham, UK</a>
+        </div>
+        <div id="destinations"></div><br />
+        Source : <input id="travelfrom" type="text" name="name" value="Chichester, UK"  size="120"/>   <br />  <br />
+        <h4>Delivery Address:</h4>
+        <div id="info" style="display:none">
+            <b>Address: </b><div id="address"></div>
+            <b>City:</b> <div id="city"></div>
+            <b>State:</b><div id="state"></div>
+            <b>Country:</b><div id="country"></div>
+            <b style="color:red">Region:</b><div id="region"></div>
+            <b>Zipcode:</b> <div id="zipcode"></div>
+            <b>Longtitude:</b><div id="longitude"></div>
+            <b>Latitude:</b><div id="latitude"></div>
+        </div>
+        <hr />
+        <input type="button" value="Calculate" onclick="GetRoute()" />
+        <p></p>
+        <br />
+        <div id="dvDistance">
+            <table  border="1" cellpadding="10">
+                <tr>
+                    <th> Start </th>
+                    <th> End </th>
+                    <th> Distance </th>
+                    <th> Duration </th>
+                </tr>
+                <tbody id="tblResults">
+
+                </tbody>
+            </table>
+
+        </div>
+
+        <p></p>
+
+        <div id="dvMap" style="min-height:500px"></div>
+
+    </div>
+</div>
+
+@section scripts{
+
+    <!--ENSURE YOU CHANGE TO YOUR OWN API KEY HERE !!! -->
+    <script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyDHCkWFfZeifw5NR9eX32nc7SAoUhHpXKw" type="text/javascript"></script>
+
+    <!-- code for example 1 -->
+    <script>
+
+        var source, destination;
+        var locations = [];
+        var directionsDisplay;
+        var directionsService = new google.maps.DirectionsService();
+
+        // initialise the location of the map on Chichester in England (ref lat and lng)
+        var map = new google.maps.Map(document.getElementById('dvMap'), {
+            center: { lat: 50.834697, lng: -0.773792 },
+            zoom: 13,
+            mapTypeId: 'roadmap'
+        });
+
+        google.maps.event.addDomListener(window, 'load', function () {
+            var sourceSearchBox = new google.maps.places.Autocomplete(document.getElementById('travelfrom'));
+            new google.maps.places.SearchBox(document.getElementById('travelto'));
+            directionsDisplay = new google.maps.DirectionsRenderer({ 'draggable': true });
+
+            sourceSearchBox.addListener('place_changed', function () {
+                $("#info").show();
+                $("address").text("");
+                $("city").text("");
+                $("state").text("");
+                $("country").text("");
+                $("zipcode").text("");
+                $("longitude").text("");
+                $("latitude").text("");
+                debugger
+                var places = sourceSearchBox.getPlace();
+                for (var i = 0; i < places.address_components.length; i++) {
+                    for (var j = 0; j < places.address_components[i].types.length; j++) {
+                        if (places.address_components[i].types[j] == "street_number") {
+                            document.getElementById('address').innerHTML = places.address_components[i].long_name + " ";
+                        }
+                        if (places.address_components[i].types[j] == "route") {
+                            document.getElementById('address').innerHTML += places.address_components[i].long_name;
+                        }
+                        if (places.address_components[i].types[j] == "locality") {
+                            document.getElementById('city').innerHTML = places.address_components[i].long_name;
+                        }
+                        if (places.address_components[i].types[j] == "administrative_area_level_1") {
+                            document.getElementById('state').innerHTML = places.address_components[i].long_name;
+                        }
+                        if (places.address_components[i].types[j] == "country") {
+                            document.getElementById('country').innerHTML = places.address_components[i].long_name;
+                        }
+
+                        if (places.address_components[i].types[j] == "postal_code") {
+                            document.getElementById('zipcode').innerHTML = places.address_components[i].long_name;
+                        }
+                    }
+                }
+
+                document.getElementById('longitude').innerHTML = places.geometry.location.lng();
+
+                document.getElementById('latitude').innerHTML = places.geometry.location.lat();
+
+            });
+        });
+
+        function PushDestination() {
+            destination = document.getElementById("travelto").value;
+            locations.push(destination);
+            document.getElementById("travelto").value = "";
+            destinationArray = document.getElementById("destinations");
+            destinationArray.innerHTML += destination + "<br />";
+        }
+
+        function setDestination(dest) {
+            document.getElementById('travelto').value = dest;
+            PushDestination();
+        }
+
+
+        function GetRoute() {
+            $("#tblResults").empty();
+            directionsDisplay.setMap(map);
+
+            source = document.getElementById("travelfrom").value;
+            destination = document.getElementById("travelto").value;
+
+            var waypoints = [];
+            for (var i = 0; i < locations.length; i++) {
+                var address = locations[i];
+                if (address !== "") {
+                    waypoints.push({
+                        location: address,
+                        stopover: true
+                    });
+                }
+            }
+
+            var request = {
+                origin: source,
+                destination: waypoints[0].location,
+                waypoints: waypoints, //an array of waypoints
+                //optimizeWaypoints: true, //set to true if you want google to determine the shortest route or false to use the order specified.
+                travelMode: google.maps.DirectionsTravelMode.DRIVING
+            };
+
+            directionsService.route(request, function (response, status) {
+                if (status == google.maps.DirectionsStatus.OK) {
+                    var dvDistance = document.getElementById("dvDistance");
+                    var distance = 0;
+                    var minute = 0.00;
+                    response.routes[0].legs.forEach(function (item, index) {
+                        if (index < response.routes[0].legs.length - 1) {
+                            distance = distance + parseInt(item.distance.text);
+                            minute = parseFloat(minute) + parseFloat(item.duration.value / 60);
+
+                            tbl = document.getElementById("tblResults");
+                            var row = tbl.insertRow(0);
+                            var cell = row.insertCell(0);
+                            cell.innerText = source;
+                            var cell = row.insertCell(1);
+                            cell.innerText = item.end_address;
+                            var cell = row.insertCell(2);
+                            cell.innerText = item.distance.text;
+                            var cell = row.insertCell(3);
+                            cell.innerText = item.duration.text;
+                        }
+                    });
+                    directionsDisplay.setDirections(response);
+                }
+                else {
+                    //handle error
+                }
+            })
+        };
+
+    </script>
+    <!-- end code for example 1 -->
+}
