@@ -3,9 +3,9 @@
 }
 <style>
     .pac-container {
-  box-sizing: content-box;
-  padding-right: 4px;
-}
+        box-sizing: content-box;
+        padding-right: 4px;
+    }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <div class="row">
@@ -17,13 +17,13 @@
 
         <div> Add Destination</div>
         <div>
-            <input id="travelto" type="text" name="name" value="Oving, UK"  size="120"/>
+            <input id="travelto" type="text" name="name" value="Oving, UK" size="120" />
             <input type="button" value="Add" onclick="PushDestination()" />
             <a href="#" onclick="setDestination('Tagmere, UK')">Tagmere, UK. </a>
             <a href="#" onclick="setDestination('Bosham, UK')">Bosham, UK</a>
         </div>
         <div id="destinations"></div><br />
-        Source : <input id="travelfrom" type="text" name="name" value="Chichester, UK"  size="120"/>   <br />  <br />
+        Source : <input id="travelfrom" type="text" name="name" value="Chichester, UK" size="120" />   <br />  <br />
         <h4>Delivery Address:</h4>
         <div id="info" style="display:none">
             <b>Address: </b><div id="address"></div>
@@ -36,11 +36,13 @@
             <b>Latitude:</b><div id="latitude"></div>
         </div>
         <hr />
-        <input type="button" value="Calculate" onclick="GetRoute()" />
+        <input type="button" value="Optimize by time" onclick="GetRoute()" />
+
+        <input type="button" value="Optimize by distance" onclick="GetRoute(true)" />
         <p></p>
         <br />
         <div id="dvDistance">
-            <table  border="1" cellpadding="10">
+            <table border="1" cellpadding="10">
                 <tr>
                     <th> Start </th>
                     <th> End </th>
@@ -48,7 +50,6 @@
                     <th> Duration </th>
                 </tr>
                 <tbody id="tblResults">
-
                 </tbody>
             </table>
 
@@ -142,7 +143,7 @@
         }
 
 
-        function GetRoute() {
+        function GetRoute(isOptimizedByDistance) {
             $("#tblResults").empty();
             directionsDisplay.setMap(map);
 
@@ -161,18 +162,39 @@
             }
 
             var request = {
-                origin: source,
-                destination: waypoints[0].location,
-                waypoints: waypoints, //an array of waypoints
+                origin: "New York, USA",//source,
+                destination: "Kearny, New Jersey, USA",//waypoints[0].location,
+                waypoints:
+                    [{
+                        location: "Kearny, New Jersey, USA",
+                        stopover: true
+                    },
+                    {
+                        location: "Newark Liberty International Airport",
+                        stopover: true
+                    }],//waypoints, //an array of waypoints
+                //provideRouteAlternatives: true,
                 //optimizeWaypoints: true, //set to true if you want google to determine the shortest route or false to use the order specified.
                 travelMode: google.maps.DirectionsTravelMode.DRIVING
             };
+
+            if (isOptimizedByDistance) {
+                request.provideRouteAlternatives = true;
+                request.optimizeWaypoints = true;
+                request.avoidHighways = true;
+                request.avoidTolls = true;
+                request.avoidFerries = true;
+            }
+            else {
+                request.optimizeWaypoints = true;
+            }
 
             directionsService.route(request, function (response, status) {
                 if (status == google.maps.DirectionsStatus.OK) {
                     var dvDistance = document.getElementById("dvDistance");
                     var distance = 0;
                     var minute = 0.00;
+
                     response.routes[0].legs.forEach(function (item, index) {
                         if (index < response.routes[0].legs.length - 1) {
                             distance = distance + parseInt(item.distance.text);
@@ -191,6 +213,7 @@
                         }
                     });
                     directionsDisplay.setDirections(response);
+                    console.log(response.routes);
                 }
                 else {
                     //handle error

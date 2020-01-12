@@ -163,7 +163,54 @@ Cache-Control: public, max-age=86400
 - The 100,000 daily free requests are shared across all Maps JavaScript API client-side services and Google Maps APIs web services—all requests are subtracted from the same pool of 100,000 free daily requests. Any additional requests are applied against the total number of Maps APIs Credits you purchased for your Premium Plan. Your free daily request pool is reset at 12:00 am Pacific Time. Note that the 100,000 daily free requests do not apply to Location Services license
 - Default rate limit, to prevent abuse. Learn how to [optimize web service usage](https://developers.google.com/maps/premium/optimize-web-services#optimize) or request a rate limit (QPS) increase.
 
-## VIII. References
+## VIII. FAQ
+
+### 1. Can I generate a map image using the Maps Static API which I store and serve from my website
+
+- You may not store and serve copies of images generated using the Maps Static API from your website. All web pages that require static images must link the src attribute of an HTML img tag or the CSS background-image attribute of an HTML div tag directly to the Maps Static API so that all map images are displayed within the HTML content of the web page and served directly to end users by Google.
+
+### 2. Does the Google Maps Platform have usage limits
+
+| API                         | QPS Limit |
+| --------------------------- | --------- |
+| Directions                  | 50 QPS    |
+| Distance Matrix             | 1000 QPS  |
+| Elevation                   | 100 QPS   |
+| Geocoding                   | 50 QPS    |
+| Geolocation                 | 100 QPS   |
+| Dynamic Maps                | 500 QPS   |
+| Static Maps                 | 500 QPS   |
+| Street View Image API       | 500 QPS   |
+| Time Zone                   | 500 QPS   |
+| Places (JavaScript and web) | 100 QPS   |
+| Roads                       | 500 QPS   |
+
+### 3. What happens if I exceed the request rate (QPS) limits
+
+- If you exceed the QPS limits of a given Google Maps Platform product, the API will return an error message. If you repeatedly exceed the limits, your access to the API may be temporarily blocked.
+
+- If you exceed the request QPS limits or otherwise abuse the service, requests will return a specific error message. If you continue to exceed limits, your access to the Google Maps Platform may be blocked.
+
+### 4. How will usage be calculated and billed
+
+- Usage is calculated at the end of each day, and priced as shown in the Pricing Sheet. At the end of every month, the total usage is charged to the payment method associated with your billing account.
+
+### 5. How much does it cost to use the Google Maps Platform
+
+- If your application generates requests or map load volumes below the complimentary $200 per month usage, your usage is free. Usage that exceeds the $200 monthly credit will be charged to your billing account.
+
+### 6. How do I avoid a large bill if my usage unexpectedly increases
+
+- The Google Maps Platform provides ways to set daily request limits and set maximum daily billable limits.
+- You can cap the maximum daily limit on usage to protect against unexpected increases. You can also set budget alerts to receive email notifications when the charges on the billing account reach a threshold you set.
+- In the Google Cloud Platform Console, taking the following steps:
+  - Go to the [APIs & Services Dashboard](https://console.cloud.google.com/project/_/apiui/apis/enabled).
+  - Select a project if prompted.
+  - Select an API from the list, then click the **Quotas** tab.
+  - Click the **edit icon** next to the **"requests per day"** quota.
+- Alternatively, you can edit multiple quotas for multiple APIs using the [IAM & admin Quotas dashboard](https://cloud.google.com/apis/docs/capping-api-usage#view_and_edit_all_quotas_for_apis_in_a_project).
+
+## IX. References
 
 - Algorithm
   - [Travelling salesman problem](https://en.wikipedia.org/wiki/Travelling_salesman_problem)
