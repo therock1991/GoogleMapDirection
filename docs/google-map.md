@@ -210,8 +210,25 @@ Cache-Control: public, max-age=86400
   - Click the **edit icon** next to the **"requests per day"** quota.
 - Alternatively, you can edit multiple quotas for multiple APIs using the [IAM & admin Quotas dashboard](https://cloud.google.com/apis/docs/capping-api-usage#view_and_edit_all_quotas_for_apis_in_a_project).
 
+### 7. How do I restrict my API key to specific websites
+
+- Use an HTTP referrer to restrict the URLs that can use an API key.
+- Here are some examples of URLs that you can allow to set up a referrer:
+  - A specific URL with an exact path: **www.example.com/path**
+  - Any URL in a single subdomain, using a wildcard asterisk (\*): **sub.example.com/\***
+  - Any subdomain or path URLs in a single domain, using wildcard asterisks (\*): **\*.example.com/\***
+  - A URL with a non-standard port: **www.example.com:8000/\***
+- **Note:** query parameters and fragments are not currently supported; they will be ignored if you include them in an HTTP referrer.
+
 ## IX. References
 
 - Algorithm
   - [Travelling salesman problem](https://en.wikipedia.org/wiki/Travelling_salesman_problem)
   - [Dijkstra's algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
+
+## Angular Setup
+
+```csharp
+npm i @agm/core --save
+npm install --save @types/googlemaps
+```
