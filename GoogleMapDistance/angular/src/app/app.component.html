@@ -404,6 +404,10 @@
   </div>
 
   <!-- Resources -->
+  <app-autocomplete
+    type="address"
+    (onLocationSelected)="onLocationSelected($event)"
+  ></app-autocomplete>
   <app-route-details></app-route-details>
   <!-- Footer -->
   <footer>

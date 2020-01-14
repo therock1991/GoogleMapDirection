@@ -47,7 +47,7 @@ export class AutocompleteComponent implements OnInit {
   appearance: string | Appearance = Appearance.STANDARD;
 
   @Input()
-  address: PlaceResult | string;
+  address: PlaceResult | string = '';
 
   @Input()
   country: string | string[];
@@ -111,8 +111,8 @@ export class AutocompleteComponent implements OnInit {
       .load()
       .then(() => {
         const autocomplete = new google.maps.places.Autocomplete(
-          this.searchElementRef.nativeElement,
-          this.autoCompleteOptions
+          this.searchElementRef.nativeElement
+          // this.autoCompleteOptions
         );
         autocomplete.addListener('place_changed', () => {
           this.ngZone.run(() => {

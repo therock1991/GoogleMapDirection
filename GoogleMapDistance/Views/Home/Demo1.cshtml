@@ -76,8 +76,8 @@
             //*********DISTANCE AND DURATION**********************//
             var service = new google.maps.DistanceMatrixService();
             service.getDistanceMatrix({
-                origins: [source],
-                destinations: ["Goodwood aerodrone, UK","Chichester Watersports"],
+                origins: ["Chichester, UK","Chichester Watersports"],
+                destinations: ["Chichester Watersports","Goodwood aerodrone, UK"],
                 travelMode: google.maps.TravelMode.DRIVING,
                 unitSystem: google.maps.UnitSystem.METRIC,
                 avoidHighways: false,

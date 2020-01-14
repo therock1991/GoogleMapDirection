@@ -230,5 +230,5 @@ Cache-Control: public, max-age=86400
 
 ```csharp
 npm i @agm/core --save
-npm install --save @types/googlemaps
+npm install --save @types/google-maps
 ```
